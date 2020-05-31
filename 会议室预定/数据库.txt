@@ -1,0 +1,36 @@
+表1
+
+pkey
+roomName
+string30
+
+roomNo
+string
+10
+
+roomAddress
+string
+256
+
+表2
+roomNo
+string
+10
+
+strreserveYmd
+string
+8
+
+strreserveHm
+string
+4
+
+endreserveYmd
+string
+8
+
+endreserveHm
+string
+4
+        strreserveYmd VARCHAR(8) NOT NULL,
+        strreserveHm VARCHAR(4) NOT NULL,
