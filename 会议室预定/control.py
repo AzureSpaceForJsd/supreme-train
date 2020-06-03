@@ -17,10 +17,17 @@ def dateCheck(strYmd,strHm,endYmd,endHm,roomName):
             endTime = row[2] + row[3]
             newStrTime = strYmd + strHm
             newEndTime = endYmd + endHm
-            if(strTime >= newEndTime or endTime <= newStrTime):
-                break
-            else:
+            if(strTime <= newStrTime and endTime > newEndTime):
                 return 1
+            else:
+                if (strTime <= newStrTime and newStrTime < endTime):
+                    return 1
+                else:
+                    if (strTime < newEndTime and newEndTime <= endTime):
+                        return 1
+                    else :
+                        break
+                
     return 0
                 
                 

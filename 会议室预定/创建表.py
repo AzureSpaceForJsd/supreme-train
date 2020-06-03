@@ -17,7 +17,7 @@ sqlreserve = """CREATE TABLE RESERVE
         strreserveHm VARCHAR(4) NOT NULL,
         endreserveYmd VARCHAR(8) NOT NULL,
         endreserveHm VARCHAR(4) NOT NULL,
-        PRIMARY KEY(strreserveYmd,strreserveHm));"""
+        PRIMARY KEY(roomNo,strreserveYmd,strreserveHm));"""
 #创建预约表
 c.execute(sqlreserve)
 #初始化会议室表插入初始数据
