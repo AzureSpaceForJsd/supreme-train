@@ -18,16 +18,16 @@ class App:
         self.sbStrYear = tk.Spinbox(root,from_=now_year,to=2030)
 
         self.labelStrMonth = tk.Label(root,text="月：")
-        self.sbStrMonth = tk.Spinbox(root,from_=now_month,to=12)
+        self.sbStrMonth = tk.Spinbox(root,from_=1,to=12)
 
         self.labelStrDay = tk.Label(root,text="日：")
         if(self.sbStrMonth.get() in ["1","3","5","7","8","10","12"]):
-            self.sbStrDay = tk.Spinbox(root,from_=now_day,to=31)
+            self.sbStrDay = tk.Spinbox(root,from_=1,to=31)
         else:
             if(self.sbStrMonth.get() in ["2"]):
-                self.sbStrDay = tk.Spinbox(root,from_=now_day,to=28)
+                self.sbStrDay = tk.Spinbox(root,from_=1,to=28)
             else:
-                self.sbStrDay = tk.Spinbox(root,from_=now_day,to=30)
+                self.sbStrDay = tk.Spinbox(root,from_=1,to=30)
         
         self.labelStrHour = tk.Label(root,text="时：")
         self.sbStrHour = tk.Spinbox(root,from_=0,to=24)
@@ -39,16 +39,16 @@ class App:
         self.sbEndYear = tk.Spinbox(root,from_=now_year,to=2030)
 
         self.labelEndMonth = tk.Label(root,text="月：")
-        self.sbEndMonth = tk.Spinbox(root,from_=now_month,to=12)
+        self.sbEndMonth = tk.Spinbox(root,from_=1,to=12)
 
         self.labelEndDay = tk.Label(root,text="日：")
         if(self.sbEndMonth.get() in ["1","3","5","7","8","10","12"]):
-            self.sbEndDay = tk.Spinbox(root,from_=now_day,to=31)
+            self.sbEndDay = tk.Spinbox(root,from_=1,to=31)
         else:
             if(self.sbEndMonth.get() in ["2"]):
-                self.sbEndDay = tk.Spinbox(root,from_=now_day,to=28)
+                self.sbEndDay = tk.Spinbox(root,from_=1,to=28)
             else:
-                self.sbEndDay = tk.Spinbox(root,from_=now_day,to=30)
+                self.sbEndDay = tk.Spinbox(root,from_=1,to=30)
         
         self.labelEndHour = tk.Label(root,text="时：")
         self.sbEndHour = tk.Spinbox(root,from_=0,to=24)
@@ -90,21 +90,22 @@ class App:
         strHm = control.zeroPad(self.sbStrHour.get()) + control.zeroPad(self.sbStrMinute.get())
         endYmd = self.sbEndYear.get() + control.zeroPad(self.sbEndMonth.get()) + control.zeroPad(self.sbEndDay.get())
         endHm = control.zeroPad(self.sbEndHour.get()) + control.zeroPad(self.sbEndMinute.get())
-        if strYmd+strHm >= endYmd+endHm:
-            tk.messagebox.showinfo(title = "确认信息",message = "请重新确认预定时间")
+        if strYmd+strHm < now_date:
+            tk.messagebox.showinfo(title = "确认信息",message = "无法预约过去的时间段")
         else:
-            resFlag = control.dateCheck(strYmd,strHm,endYmd,endHm,self.sbmeetingRoom.get())
-            if resFlag == 0:
-                control.insertReserve(strYmd,strHm,endYmd,endHm,self.sbmeetingRoom.get())
-                tk.messagebox.showinfo(title = "预定信息",message = "预定成功")
+            if strYmd+strHm >= endYmd+endHm:
+                tk.messagebox.showinfo(title = "确认信息",message = "请重新确认预定时间")
             else:
-                tk.messagebox.showinfo(title = "预定信息",message = "该时间段已经被占用，请重新选择")
+                resFlag = control.dateCheck(strYmd,strHm,endYmd,endHm,self.sbmeetingRoom.get())
+                if resFlag == 0:
+                    control.insertReserve(strYmd,strHm,endYmd,endHm,self.sbmeetingRoom.get())
+                    tk.messagebox.showinfo(title = "预定信息",message = "预定成功")
+                else:
+                    tk.messagebox.showinfo(title = "预定信息",message = "该时间段已经被占用，请重新选择")
 
 mtRoom = control.setMeetingRoom();
 now_date = time.strftime('%Y%m%d',time.localtime(time.time()))
-now_year = int(now_date[0:4],base=10)
-now_month = int(now_date[4:6],base=10)
-now_day = int(now_date[6:8],base=10)
+now_year = 2020
 root = tk.Tk()
 root.title("会议室预定系统")
 app = App(root)
