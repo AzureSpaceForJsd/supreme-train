@@ -4,7 +4,7 @@
     <el-form ref="form" :model="form" label-width="80px">
     <el-form-item label="会议室 " label-width="80px" label-position="center">
       <el-col :span="10">
-        <el-select v-model="value" placeholder="请选择会议室">
+        <el-select v-model="form.value" placeholder="请选择会议室">
           <el-option
             v-for="room in rooms"
             :key="room.roomNo"
@@ -16,13 +16,30 @@
     </el-form-item>
     <el-form-item label="预定日期">
       <el-col :span="11">
-        <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 50%;"></el-date-picker>
+        <el-date-picker type="date" placeholder="选择日期" v-model="form.date" style="width: 50%;" value-format="timestamp"></el-date-picker>
       </el-col>
     </el-form-item>
     <el-form-item label="预定时间">
       <el-col :span="11">
-        <el-time-picker is-range range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" placeholder="选择时间范围" v-model="form.date2" style="width: 50%;">
-        </el-time-picker>
+        <el-time-select
+          placeholder="起始时间"
+          v-model="form.startTime"
+          :picker-options="{
+            start: '08:30',
+            step: '00:15',
+            end: '18:30'
+          }">
+        </el-time-select>
+        <el-time-select
+          placeholder="结束时间"
+          v-model="form.endTime"
+          :picker-options="{
+          start: '08:30',
+          step: '00:15',
+          end: '18:30',
+          minTime: form.startTime
+          }">
+        </el-time-select>
       </el-col>
     </el-form-item>
     <el-form-item>
@@ -38,38 +55,57 @@
 
 <script>
 import axios from 'axios'
+import {mapState, mapActions} from 'vuex'
 
 export default {
   name: 'MeetingReserve',
   data () {
     return {
-      // value1: '',
-      // value2: [new Date(2016, 9, 10, 8, 40), new Date(2016, 9, 10, 9, 40)]
       form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        value: '',
+        date: '',
+        startTime: '',
+        endTime: ''
       },
       base_url: 'http://localhost:8000/api/meeting/',
+      post_url: '',
+      resFlag: '',
       rooms: 'null'
     }
   },
+  computed: {
+    ...mapState({
+      rooms: state => state.ArchiveStore.meetingRoom
+    })
+  },
   methods: {
+    ...mapActions([
+      'getMeetingRoom'
+    ]),
     getAll () {
       axios.get(this.base_url)
         .then(res => {
           this.rooms = res.data
         })
     },
-    onSubmit (reserve) {
+    reserveRoom () {
+      axios.post(this.post_url, this.form)
+        .then(res => {
+          this.resFlag = res.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    onSubmit: function () {
 
+    },
+    getMeetingRoom () {
+      this.getMeetingRoom()
     }
-
+  },
+  activated: function () {
+    this.rooms = getMeetingRoom()
   },
   mounted () {
     this.getAll()

@@ -13,11 +13,12 @@ class MeetingRoom(models.Model):
         db_table = 'Room'
         objects = models.Manager()
 
-class Reserve
-(models.Model):
+class Reserve(models.Model):
     reservDate = models.DateField()
     reserveStartTime = models.TimeField()
     reserveEndTime = models.TimeField()
     mediaFlg = models.CharField(max_length=1)
     reservePerson = models.CharField(max_length=50)
-    class 
+    class ReserveRoom:
+        db_table = 'ReserveRoom'
+        objects = models.Manager()

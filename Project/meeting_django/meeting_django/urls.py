@@ -18,13 +18,17 @@ from django.urls import path, include
 from  django.views.generic.base import TemplateView
 from rest_framework import routers
 from meeting.views import MeetingRoomViewSet
+from meeting.views import getMeetingrooms
 
 router = routers.DefaultRouter()
 router.register('meeting',MeetingRoomViewSet) 
+router.register('meetingroom',MeetingRoomViewSet) 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',TemplateView.as_view(template_name="index.html")),
     path('meeting/', include('meeting.urls')),
-    path('api/', include(router.urls))
+    path('api/', include(router.urls)),
+    path("api/meetingrooms", view=getMeetingrooms, name="meetingroom_list")
+    
 ]

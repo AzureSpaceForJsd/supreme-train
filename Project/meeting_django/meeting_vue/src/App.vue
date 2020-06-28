@@ -7,7 +7,6 @@
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
 import MeetingReserve from './components/MeetingReserve.vue'
 
 export default {

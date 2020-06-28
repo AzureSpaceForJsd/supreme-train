@@ -10,14 +10,11 @@ from .serializers import MeetingRoomsSerializer
 def meeting(request):
     return render(request, "index.html")
 
-def meetingrooms(request):
-    meetingrooms = [
-        {"id":"neusoft001", "name": "第一会议室", "address": "F3-520", "status": "abled", "level": "2", "media": "TV"},
-        {"id":"neusoft002", "name": "第二会议室", "address": "F3-520", "status": "abled", "level": "2", "media": "TV"},
-        {"id":"neusoft003", "name": "第三会议室", "address": "F3-520", "status": "abled", "level": "2", "media": "TV"},
-        {"id":"neusoft004", "name": "第四会议室", "address": "F3-520", "status": "abled", "level": "2", "media": "TV"},
-    ]
-    return JsonResponse(meetingrooms, safe=False)
+def getMeetingrooms(request):
+    results={}
+    queryset = MeetingRoom.objects.values().all().order_by('roomNo')
+    results=list(queryset)
+    return JsonResponse(results, safe=False)
 
 class DataTest(APIView):
     def get(self,request,*args,**kwargs):
