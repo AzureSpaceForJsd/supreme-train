@@ -14,6 +14,7 @@ class MeetingRoom(models.Model):
         objects = models.Manager()
 
 class Reserve(models.Model):
+    reserveRoomNo = models.CharField(max_length=20)
     reservDate = models.DateField()
     reserveStartTime = models.TimeField()
     reserveEndTime = models.TimeField()

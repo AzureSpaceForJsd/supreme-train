@@ -4,16 +4,34 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets
 from .models import MeetingRoom
+from .models import Reserve
 from .serializers import MeetingRoomsSerializer
+import sqlite3
 
 # Create your views here.
 def meeting(request):
     return render(request, "index.html")
 
 def getMeetingrooms(request):
-    results={}
-    queryset = MeetingRoom.objects.values().all().order_by('roomNo')
-    results=list(queryset)
+    responseFlag = 0
+    if request.method == "GET":
+        conn = conn=sqlite3.connect("db.sqlite3")
+        cursor = conn.cursor()
+        startTime = request.GET.get("startTime")
+        endTime = request.GET.get("endTime")
+        date = request.GET.get("date")
+        roomNo = request.GET.get("roomNo")
+        sql = """select * from ReserveRoom where %s=reserveRoomNo and %s=reservDate and(%s between reserveStartTime and reserveEndTime
+        or %s between reserveStartTime and reserveEndTime or %s<reserveStartTime and %s>reserveEndTime)"""
+        info = (roomNo, date, startTime, endTime, startTime, endTime)
+        cursor.execute(sql, info)
+        resultRow = cursor.fetchall
+        if resultRow == null:
+            responseFlag = 1
+            reserve = Reserve(reserveRoomNo=roomNo, reservDate=date, reserveStartTime=startTime, reserveEndTime=endTime, mediaFlg=0, reservePerson=000)
+            reserve.save
+        
+    results={responseFlag}
     return JsonResponse(results, safe=False)
 
 class DataTest(APIView):
