@@ -6,6 +6,8 @@ from rest_framework import viewsets
 from .models import MeetingRoom
 from .models import Reserve
 from .serializers import MeetingRoomsSerializer
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 import sqlite3
 
 # Create your views here.
@@ -13,8 +15,8 @@ def meeting(request):
     return render(request, "index.html")
 
 def getMeetingrooms(request):
-    responseFlag = 0
     if request.method == "GET":
+        orderFlag = 0
         conn = conn=sqlite3.connect("db.sqlite3")
         cursor = conn.cursor()
         startTime = request.GET.get("startTime")
@@ -27,27 +29,61 @@ def getMeetingrooms(request):
         cursor.execute(sql, info)
         resultRow = cursor.fetchall
         if resultRow == null:
-            responseFlag = 1
+            orderFlag = 1
             reserve = Reserve(reserveRoomNo=roomNo, reservDate=date, reserveStartTime=startTime, reserveEndTime=endTime, mediaFlg=0, reservePerson=000)
             reserve.save
         
-    results={responseFlag}
-    return JsonResponse(results, safe=False)
-
-class DataTest(APIView):
-    def get(self,request,*args,**kwargs):
-        print('请求后台数据成功！')
-        return Response(['后台列表数据1','后台列表数据2'])
-
-class Search(APIView):
-    def get(self,request):
-        kw = request.GET.get('0', None)
-        print(request.GET.get('0', None))
-        if kw != None:
-            return Response("您搜索的数据为：" + kw)
-        else:
-            return Response("没有搜索到任何数据")
+    return JsonResponse({
+                "orderFlag": orderFlag,
+            })
             
 class MeetingRoomViewSet(viewsets.ModelViewSet):
     queryset = MeetingRoom.objects.all().order_by('roomNo')
     serializer_class = MeetingRoomsSerializer
+
+class Users:
+    @staticmethod
+    def get_status(request):
+        if request.user.is_authenticated:
+            return JsonResponse({
+                "status": 0,
+                "username": str(request.user),
+                "email": str(request.user.email),
+            })
+        else:
+            return JsonResponse({
+                "status": 1
+            })
+
+    @staticmethod
+    def login_user(request):
+        if request.method == "POST":
+            data = json.loads(request.body)
+            username = data.get("username")
+            password = data.get("password")
+            if username is not None and password is not None:
+                islogin = authenticate(request, username=username, password=password)
+                if islogin:
+                    login(request, islogin)
+                    return JsonResponse({
+                        "status": 0,
+                        "message": "Login Success",
+                        "username": username
+                    })
+                else:
+                    return JsonResponse({
+                        "status": 1,
+                        "message": "登录失败, 请检查用户名或者密码是否输入正确."
+                    })
+            else:
+                return JsonResponse({
+                    "status": 2,
+                    "message": "参数错误"
+                })
+
+    @staticmethod
+    def logout_user(request):
+        logout(request)
+        return JsonResponse({
+            "status": 0
+        })

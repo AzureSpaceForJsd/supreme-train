@@ -1,21 +1,27 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import HelloWorld from '@/components/HelloWorld'
-import MeetingReserve from '@/components/MeetingReserve'
+import MeetingReserve from '@/components/Order/MeetingReserve'
+import Orderlist from '@/components/Order/Orderlist'
+import Login from '@/components/User/Login'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'HelloWorld',
-    //   component: HelloWorld
-    // }
     {
-      path: '/',
+      path: '/Order/MeetingReserve',
       name: 'MeetingReserve',
       component: MeetingReserve
+    },
+    {
+      path: '/',
+      name: 'Orderlist',
+      component: Orderlist
+    },
+    {
+      path: '/user/login',
+      name: 'Login',
+      component: Login
     }
   ]
 })
